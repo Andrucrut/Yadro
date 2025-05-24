@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: randomusers
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+
+  web:
+    build: .
+    depends_on:
+      - db
+    environment:
+      ASYNC_DB_URL: postgresql+asyncpg://postgres:password@db/randomusers
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+
+volumes:
+  pg_data:
